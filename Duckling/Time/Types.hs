@@ -776,6 +776,14 @@ openInterval tzSeries direction (TimeObject s g _) = OpenIntervalValue
 -- -----------------------------------------------------------------
 -- Time object helpers
 
+changeGrain :: TimeObject -> TG.Grain -> TimeObject
+changeGrain (TimeObject s _ e) theGrain =
+    TimeObject
+        { start = s
+        , grain = theGrain
+        , end = e
+        }
+
 timeRound :: TimeObject -> TG.Grain -> TimeObject
 timeRound t TG.Week = TimeObject {start = s, grain = TG.Week, end = Nothing}
   where

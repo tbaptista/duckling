@@ -1894,7 +1894,7 @@ ruleCycleThisLastNext = Rule
           "this"          -> tt $ cycleNth grain 0
           "coming"        -> tt $ cycleNth grain 0
           "current"       -> tt $ cycleNth grain 0
-          "last"          -> tt . cycleNth grain $ - 1
+          "last"          -> tt $ cycleNNoRound True grain $ - 1
           "past"          -> tt . cycleNth grain $ - 1
           "previous"      -> tt . cycleNth grain $ - 1
           "next"          -> tt $ cycleNth grain 1
@@ -2146,7 +2146,7 @@ ruleDurationLastNext = Rule
        Token Duration DurationData{TDuration.grain, TDuration.value}:
        _) -> case Text.toLower match of
          "next" -> tt $ cycleN True grain value
-         "last" -> tt $ cycleN True grain (- value)
+         "last" -> tt $ cycleNNoRound True grain (- value)
          "past" -> tt $ cycleN True grain (- value)
          _      -> Nothing
       _ -> Nothing

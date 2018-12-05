@@ -18,7 +18,7 @@ module Duckling.Time.Helpers
   , isOrdinalBetween, isMidnightOrNoon, isOkWithThisNext, sameGrain
   , hasTimezone, hasNoTimezone, today
     -- Production
-  , cycleLastOf, cycleN, cycleNth, cycleNthAfter, dayOfMonth, dayOfWeek
+  , cycleLastOf, cycleN, cycleNNoRound, cycleNth, cycleNthAfter, dayOfMonth, dayOfWeek
   , durationAfter, durationAgo, durationBefore, mkOkForThisNext, form, hour
   , hourMinute, hourMinuteSecond, inDuration, intersect, intersectDOM, interval
   , inTimezone, longWEBefore, minute, minutesAfter, minutesBefore, mkLatent
@@ -99,6 +99,11 @@ timeCycle :: TG.Grain -> TTime.Predicate
 timeCycle grain = mkSeriesPredicate series
   where
   series t _ = TTime.timeSequence grain 1 $ TTime.timeRound t grain
+
+timeCycleNoRound :: TG.Grain -> TTime.Predicate
+timeCycleNoRound grain = mkSeriesPredicate series
+  where
+  series t _ = TTime.timeSequence grain 1 $ TTime.changeGrain t grain
 
 timeSecond :: Int -> TTime.Predicate
 timeSecond n = mkSecondPredicate n
@@ -481,6 +486,12 @@ cycleN notImmediate grain n = TTime.timedata'
   { TTime.timePred = takeN n notImmediate $ timeCycle grain
   , TTime.timeGrain = grain
   }
+
+cycleNNoRound :: Bool -> TG.Grain -> Int -> TimeData
+cycleNNoRound notImmediate grain n = TTime.timedata'
+   { TTime.timePred = takeN n notImmediate $ timeCycleNoRound grain
+   , TTime.timeGrain = grain
+   }
 
 cycleNth :: TG.Grain -> Int -> TimeData
 cycleNth grain n = TTime.timedata'
