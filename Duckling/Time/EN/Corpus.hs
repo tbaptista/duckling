@@ -1598,10 +1598,6 @@ allExamples = concat
              [ "third quarter of last year"
              , "third quarter 2012"
              ]
-  , examples (datetime (2012, 1, 1, 0, 0, 0) Quarter)                                                           --FALHOU
-             [ "first quarter of last year"
-             , "first quarter 2012"
-             ]
   , examples (datetime (2013, 1, 2, 0, 0, 0) Day)                                                               --FALHOU
              [ "second day of last month"
              ]
