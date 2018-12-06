@@ -66,18 +66,19 @@ data TimeData = TimeData
   , okForThisNext :: Bool -- allows specific this+Time
   , holiday :: Maybe Text
   , hasTimezone :: Bool -- hack to prevent double timezone parsing
+  , noRound :: Bool -- hack to prevent rounding on last <cycle> expressions
   }
 
 instance Eq TimeData where
-  (==) (TimeData _ l1 g1 n1 f1 d1 _ _ t1) (TimeData _ l2 g2 n2 f2 d2 _ _ t2) =
-    l1 == l2 && g1 == g2 && n1 == n2 && f1 == f2 && d1 == d2 && t1 == t2
+  (==) (TimeData _ l1 g1 n1 f1 d1 _ _ t1 r1) (TimeData _ l2 g2 n2 f2 d2 _ _ t2 r2) =
+    l1 == l2 && g1 == g2 && n1 == n2 && f1 == f2 && d1 == d2 && t1 == t2 && r1 == r2
 
 instance Hashable TimeData where
-  hashWithSalt s (TimeData _ latent grain imm form dir _ _ _) = hashWithSalt s
+  hashWithSalt s (TimeData _ latent grain imm form dir _ _ _ _) = hashWithSalt s
     (0::Int, (latent, grain, imm, form, dir))
 
 instance Ord TimeData where
-  compare (TimeData _ l1 g1 n1 f1 d1 _ _ _) (TimeData _ l2 g2 n2 f2 d2 _ _ _) =
+  compare (TimeData _ l1 g1 n1 f1 d1 _ _ _ _) (TimeData _ l2 g2 n2 f2 d2 _ _ _ _) =
     case compare g1 g2 of
       EQ -> case compare f1 f2 of
         EQ -> case compare l1 l2 of
@@ -89,7 +90,7 @@ instance Ord TimeData where
       z -> z
 
 instance Show TimeData where
-  show (TimeData _ latent grain _ form dir _ holiday tz) =
+  show (TimeData _ latent grain _ form dir _ holiday tz noRound) =
     "TimeData{" ++
     "latent=" ++ show latent ++
     ", grain=" ++ show grain ++
@@ -97,6 +98,7 @@ instance Show TimeData where
     ", direction=" ++ show dir ++
     ", holiday=" ++ show holiday ++
     ", hasTimezone=" ++ show tz ++
+    ", noRound=" ++ show noRound ++
     "}"
 
 instance NFData TimeData where
@@ -105,7 +107,7 @@ instance NFData TimeData where
 instance Resolve TimeData where
   type ResolvedValue TimeData = TimeValue
   resolve _ Options {withLatent = False} TimeData {latent = True} = Nothing
-  resolve context _ TimeData {timePred, latent, notImmediate, direction, holiday} = do
+  resolve context _ TimeData {timePred, latent, notImmediate, direction, holiday, noRound} = do
     value <- case future of
       [] -> listToMaybe past
       ahead:nextAhead:_
@@ -129,6 +131,7 @@ instance Resolve TimeData where
         , tzSeries = tzSeries
         , maxTime = timePlus refTime TG.Year 2000
         , minTime = timePlus refTime TG.Year $ - 2000
+        , noRnd = noRound
         }
       (past, future) = runPredicate timePred refTime tc
 
@@ -143,6 +146,7 @@ timedata' = TimeData
   , okForThisNext = False
   , holiday = Nothing
   , hasTimezone = False
+  , noRound = False
   }
 
 data TimeContext = TimeContext
@@ -150,6 +154,7 @@ data TimeContext = TimeContext
   , tzSeries :: Series.TimeZoneSeries
   , maxTime  :: TimeObject
   , minTime  :: TimeObject
+  , noRnd    :: Bool
   }
 
 data InstantValue = InstantValue

@@ -18,10 +18,10 @@ module Duckling.Time.Helpers
   , isOrdinalBetween, isMidnightOrNoon, isOkWithThisNext, sameGrain
   , hasTimezone, hasNoTimezone, today
     -- Production
-  , cycleLastOf, cycleN, cycleNNoRound, cycleNth, cycleNthAfter, dayOfMonth, dayOfWeek
+  , cycleLastOf, cycleN, cycleNth, cycleNthAfter, dayOfMonth, dayOfWeek
   , durationAfter, durationAgo, durationBefore, mkOkForThisNext, form, hour
   , hourMinute, hourMinuteSecond, inDuration, intersect, intersectDOM, interval
-  , inTimezone, longWEBefore, minute, minutesAfter, minutesBefore, mkLatent
+  , inTimezone, longWEBefore, minute, minutesAfter, minutesBefore, mkNoRound, mkLatent
   , month, monthDay, notLatent, now, nthDOWOfMonth, partOfDay, predLastOf
   , predNth, predNthAfter, predNthClosest, season, second, timeOfDayAMPM
   , weekday, weekend, workweek, withDirection, year, yearMonthDay, tt, durationIntervalAgo
@@ -98,12 +98,7 @@ timeComputed xs = mkSeriesPredicate series
 timeCycle :: TG.Grain -> TTime.Predicate
 timeCycle grain = mkSeriesPredicate series
   where
-  series t _ = TTime.timeSequence grain 1 $ TTime.timeRound t grain
-
-timeCycleNoRound :: TG.Grain -> TTime.Predicate
-timeCycleNoRound grain = mkSeriesPredicate series
-  where
-  series t _ = TTime.timeSequence grain 1 $ TTime.changeGrain t grain
+  series t tc = TTime.timeSequence grain 1 $ if (TTime.noRnd tc) then TTime.changeGrain t grain else TTime.timeRound t grain
 
 timeSecond :: Int -> TTime.Predicate
 timeSecond n = mkSecondPredicate n
@@ -379,9 +374,9 @@ intersect td1 td2 =
 
 intersectWithReplacement :: TimeData -> TimeData -> TimeData -> Maybe TimeData
 intersectWithReplacement
-  (TimeData pred1 _ g1 _ _ _ _ h1 _)
-  (TimeData pred2 _ g2 _ _ _ _ h2 _)
-  (TimeData pred3 _ g3 _ _ _ _ h3 _)
+  (TimeData pred1 _ g1 _ _ _ _ h1 _ _)
+  (TimeData pred2 _ g2 _ _ _ _ h2 _ _)
+  (TimeData pred3 _ g3 _ _ _ _ h3 _ _)
   | g1 == g2 && g2 == g3 = Just $ TTime.timedata'
     { TTime.timePred = timeComposeWithReplacement pred1 pred2 pred3
     , TTime.timeGrain = g1
@@ -391,7 +386,7 @@ intersectWithReplacement
   | otherwise = Nothing
 
 intersect' :: (TimeData, TimeData) -> TimeData
-intersect' (TimeData pred1 _ g1 _ _ d1 _ h1 _, TimeData pred2 _ g2 _ _ d2 _ h2 _)
+intersect' (TimeData pred1 _ g1 _ _ d1 _ h1 _ _, TimeData pred2 _ g2 _ _ d2 _ h2 _ _)
   | g1 < g2 = TTime.timedata'
     { TTime.timePred = timeCompose pred1 pred2
     , TTime.timeGrain = g1
@@ -487,12 +482,6 @@ cycleN notImmediate grain n = TTime.timedata'
   , TTime.timeGrain = grain
   }
 
-cycleNNoRound :: Bool -> TG.Grain -> Int -> TimeData
-cycleNNoRound notImmediate grain n = TTime.timedata'
-   { TTime.timePred = takeN n notImmediate $ timeCycleNoRound grain
-   , TTime.timeGrain = grain
-   }
-
 cycleNth :: TG.Grain -> Int -> TimeData
 cycleNth grain n = TTime.timedata'
   {TTime.timePred = takeNth n False $ timeCycle grain, TTime.timeGrain = grain}
@@ -571,7 +560,7 @@ toTimeObjectM (year, month, day) = do
     }
 
 interval' :: TTime.TimeIntervalType -> (TimeData, TimeData) -> TimeData
-interval' intervalType (TimeData p1 _ g1 _ _ _ _ _ _, TimeData p2 _ g2 _ _ _ _ _ _) =
+interval' intervalType (TimeData p1 _ g1 _ _ _ _ _ _ _, TimeData p2 _ g2 _ _ _ _ _ _ _) =
   TTime.timedata'
     { TTime.timePred = mkTimeIntervalsPredicate intervalType' p1 p2
     , TTime.timeGrain = min g1 g2
@@ -628,6 +617,9 @@ inTimezone input td@TimeData {TTime.timePred = p} = do
 
 withHoliday :: Text -> TimeData -> TimeData
 withHoliday n td = td {TTime.holiday = Just n}
+
+mkNoRound :: TimeData -> TimeData
+mkNoRound td = td {TTime.noRound = True}
 
 mkLatent :: TimeData -> TimeData
 mkLatent td = td {TTime.latent = True}

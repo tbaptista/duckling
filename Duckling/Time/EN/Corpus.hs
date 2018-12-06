@@ -286,7 +286,7 @@ allExamples = concat
              , "current week"
              , "coming week"
              ]
-  , examples (datetimeInterval ((2013, 2, 5, 4, 30, 0), (2013, 2, 12, 4, 30, 0)) Week)
+  , examples (datetime (2013, 2, 5, 4, 30, 0) Week)
              [ "last week"
              ]
   , examples (datetime (2013, 2, 4, 0, 0, 0) Week)
@@ -298,7 +298,7 @@ allExamples = concat
              , "the following week"
              , "around next week"
              ]
-  , examples (datetimeInterval ((2013, 1, 12, 4, 30, 0), (2013, 2, 12, 4, 30, 0))  Month)
+  , examples (datetime (2013, 1, 12, 4, 30, 0)  Month)
              [ "last month"
              ]
   , examples (datetime (2013, 3, 1, 0, 0, 0) Month)
@@ -338,7 +338,7 @@ allExamples = concat
              , "18q4"
              , "2018Q4"
              ]
-  , examples (datetimeInterval ((2012, 2, 12, 4, 30, 0), (2013, 2, 12, 4, 30, 0)) Year)
+  , examples (datetime (2012, 2, 12, 4, 30, 0) Year)
              [ "last year"
              , "last yr"
              ]
@@ -783,11 +783,11 @@ allExamples = concat
              [ "last MLK Jr. day"
              , "MLK day 2013"
              ]
-  --, examples (datetimeHoliday (2012, 1, 16, 0, 0, 0) Day "Martin Luther King's Day")                          --FALHOU
-  --           [ "MLK day of last year"
-  --           , "MLK day 2012"
-  --           , "Civil Rights Day of last year"
-  --           ]
+  , examples (datetimeHoliday (2012, 1, 16, 0, 0, 0) Day "Martin Luther King's Day")
+             [ "MLK day of last year"
+             , "MLK day 2012"
+             , "Civil Rights Day of last year"
+             ]
   , examples (datetimeHoliday (2013, 11, 1, 0, 0, 0) Day "World Vegan Day")
              [ "world vegan day"
              ]
@@ -1317,14 +1317,14 @@ allExamples = concat
              , "at the beginning of current week"
              , "at the beginning of coming week"
              ]
-  --, examples (datetimeInterval ((2013, 2, 4, 0, 0, 0), (2013, 2, 7, 0, 0, 0)) Day)                            --FALHOU
-  --           [ "beginning of last week"
-  --           , "beginning of past week"
-  --           , "beginning of previous week"
-  --           , "at the beginning of last week"
-  --           , "at the beginning of past week"
-  --           , "at the beginning of previous week"
-  --           ]
+  , examples (datetimeInterval ((2013, 2, 4, 0, 0, 0), (2013, 2, 7, 0, 0, 0)) Day)
+             [ "beginning of last week"
+             , "beginning of past week"
+             , "beginning of previous week"
+             , "at the beginning of last week"
+             , "at the beginning of past week"
+             , "at the beginning of previous week"
+             ]
   , examples (datetimeInterval ((2013, 2, 18, 0, 0, 0), (2013, 2, 21, 0, 0, 0)) Day)
              [ "beginning of next week"
              , "beginning of the following week"
@@ -1594,14 +1594,14 @@ allExamples = concat
              , "guru gobind singh jayanti"
              , "Guru Govind Singh Jayanti"
              ]
-  , examples (datetime (2012, 7, 1, 0, 0, 0) Quarter)                                                           --FALHOU
+  , examples (datetime (2012, 7, 1, 0, 0, 0) Quarter)
              [ "third quarter of last year"
              , "third quarter 2012"
              ]
-  , examples (datetime (2013, 1, 2, 0, 0, 0) Day)                                                               --FALHOU
+  , examples (datetime (2013, 1, 2, 0, 0, 0) Day)
              [ "second day of last month"
              ]
-  , examples (datetime (2013, 2, 5, 0, 0, 0) Day)                                                               --FALHOU
+  , examples (datetime (2013, 2, 5, 0, 0, 0) Day)
              [ "second day of last week"
              ]
   ]
