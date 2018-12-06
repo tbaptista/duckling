@@ -286,7 +286,7 @@ allExamples = concat
              , "current week"
              , "coming week"
              ]
-  , examples (datetime (2013, 2, 5, 4, 30, 0) Week)
+  , examples (datetimeInterval ((2013, 2, 5, 4, 30, 0), (2013, 2, 12, 4, 30, 0)) Week)
              [ "last week"
              ]
   , examples (datetime (2013, 2, 4, 0, 0, 0) Week)
@@ -298,7 +298,7 @@ allExamples = concat
              , "the following week"
              , "around next week"
              ]
-  , examples (datetime (2013, 1, 12, 4, 30, 0)  Month)
+  , examples (datetimeInterval ((2013, 1, 12, 4, 30, 0), (2013, 2, 12, 4, 30, 0))  Month)
              [ "last month"
              ]
   , examples (datetime (2013, 3, 1, 0, 0, 0) Month)
@@ -338,7 +338,7 @@ allExamples = concat
              , "18q4"
              , "2018Q4"
              ]
-  , examples (datetime (2012, 2, 12, 4, 30, 0) Year)
+  , examples (datetimeInterval ((2012, 2, 12, 4, 30, 0), (2013, 2, 12, 4, 30, 0)) Year)
              [ "last year"
              , "last yr"
              ]

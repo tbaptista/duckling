@@ -1894,7 +1894,7 @@ ruleCycleThisLastNext = Rule
           "this"          -> tt $ cycleNth grain 0
           "coming"        -> tt $ cycleNth grain 0
           "current"       -> tt $ cycleNth grain 0
-          "last"          -> tt $ mkNoRound $ cycleNth grain $ - 1
+          "last"          -> tt $ mkNoRound $ cycleN True grain $ - 1
           "past"          -> tt . cycleNth grain $ - 1
           "previous"      -> tt . cycleNth grain $ - 1
           "next"          -> tt $ cycleNth grain 1
