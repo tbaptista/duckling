@@ -138,7 +138,7 @@ takeN n notImmediate f = mkSeriesPredicate series
         (ahead:rest)
           | notImmediate && isJust (TTime.timeIntersect ahead baseTime) -> rest
         _ -> future
-      slot = if n >= 0
+      tempSlot = if n >= 0
         then case fut of
           (start:_) -> case drop n fut of
             (end:_) -> Just $ TTime.timeInterval TTime.Open start end
@@ -149,6 +149,11 @@ takeN n notImmediate f = mkSeriesPredicate series
             (start:_) -> Just $ TTime.timeInterval TTime.Closed start end
             _ -> Nothing
           _ -> Nothing
+      slot = if (TTime.noRnd context)
+        then case tempSlot of
+            Just sl -> Just $ TTime.changeGrain sl TG.Second
+            _ -> Nothing
+        else tempSlot
 
 -- | -1 is the first element in the past
 -- | 0 is the first element in the future
