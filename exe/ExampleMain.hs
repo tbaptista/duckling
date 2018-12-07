@@ -94,7 +94,7 @@ parseHandler tzs = do
           { referenceTime = maybe now (parseRefTime timezone) ref
           , locale = maybe (makeLocale (parseLang l) Nothing) parseLocale loc
           }
-        options = Options {withLatent = parseLatent latent, withoutRound = parseLatent noRound}
+        options = Options {withLatent = parseLatent latent, withoutRound = parseNoRound noRound}
 
         dimParse = fromMaybe [] $ decode $ LBS.fromStrict $ fromMaybe "" ds
         dims = mapMaybe parseDimension dimParse
@@ -107,6 +107,7 @@ parseHandler tzs = do
     defaultLocale = makeLocale defaultLang Nothing
     defaultTimeZone = "America/Los_Angeles"
     defaultLatent = False
+    defaultNoRound = True
 
     parseDimension :: Text -> Maybe (Some Dimension)
     parseDimension x = fromName x <|> fromCustomName x
@@ -142,3 +143,7 @@ parseHandler tzs = do
     parseLatent :: Maybe ByteString -> Bool
     parseLatent x = fromMaybe defaultLatent
       (readMaybe (Text.unpack $ Text.toTitle $ Text.decodeUtf8 $ fromMaybe empty x)::Maybe Bool)
+
+    parseNoRound :: Maybe ByteString -> Bool
+    parseNoRound x = fromMaybe defaultNoRound
+          (readMaybe (Text.unpack $ Text.toTitle $ Text.decodeUtf8 $ fromMaybe empty x)::Maybe Bool)
