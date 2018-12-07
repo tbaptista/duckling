@@ -80,6 +80,7 @@ parseHandler tzs = do
   loc <- getPostParam "locale"
   ref <- getPostParam "reftime"
   latent <- getPostParam "latent"
+  noRound <- getPostParam "noround"
 
   case t of
     Nothing -> do
@@ -93,7 +94,7 @@ parseHandler tzs = do
           { referenceTime = maybe now (parseRefTime timezone) ref
           , locale = maybe (makeLocale (parseLang l) Nothing) parseLocale loc
           }
-        options = Options {withLatent = parseLatent latent}
+        options = Options {withLatent = parseLatent latent, withoutRound = parseLatent noRound}
 
         dimParse = fromMaybe [] $ decode $ LBS.fromStrict $ fromMaybe "" ds
         dims = mapMaybe parseDimension dimParse

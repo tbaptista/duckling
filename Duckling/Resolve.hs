@@ -37,8 +37,9 @@ data Context = Context
   }
   deriving (Eq, Show)
 
-newtype Options = Options
+data Options = Options
   { withLatent :: Bool  -- When set, includes less certain parses, e.g. "7" as an hour of the day
+  , withoutRound :: Bool -- When set, prevents the truncation of timeCycles in expressions like "last week"
   }
   deriving (Eq, Show)
 

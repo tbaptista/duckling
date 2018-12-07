@@ -482,9 +482,18 @@ cycleN notImmediate grain n = TTime.timedata'
   , TTime.timeGrain = grain
   }
 
+takeNthOrN :: TG.Grain -> Int -> TTime.Predicate
+takeNthOrN grain n = mkSeriesPredicate series
+    where
+        series t tc =
+            if (TTime.noRnd tc)
+            then runPredicate (takeN n True $ timeCycle grain) t tc
+            else runPredicate (takeNth n False $ timeCycle grain) t tc
+
 cycleNth :: TG.Grain -> Int -> TimeData
 cycleNth grain n = TTime.timedata'
-  {TTime.timePred = takeNth n False $ timeCycle grain, TTime.timeGrain = grain}
+  { TTime.timePred = takeNthOrN grain n
+  , TTime.timeGrain = grain}
 
 cycleNthAfter :: Bool -> TG.Grain -> Int -> TimeData -> TimeData
 cycleNthAfter notImmediate grain n TimeData {TTime.timePred = p} =

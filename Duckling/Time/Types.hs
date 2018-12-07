@@ -107,7 +107,7 @@ instance NFData TimeData where
 instance Resolve TimeData where
   type ResolvedValue TimeData = TimeValue
   resolve _ Options {withLatent = False} TimeData {latent = True} = Nothing
-  resolve context _ TimeData {timePred, latent, notImmediate, direction, holiday, noRound} = do
+  resolve context Options {withoutRound} TimeData {timePred, latent, notImmediate, direction, holiday, noRound} = do
     value <- case future of
       [] -> listToMaybe past
       ahead:nextAhead:_
@@ -131,7 +131,7 @@ instance Resolve TimeData where
         , tzSeries = tzSeries
         , maxTime = timePlus refTime TG.Year 2000
         , minTime = timePlus refTime TG.Year $ - 2000
-        , noRnd = noRound
+        , noRnd = withoutRound && noRound
         }
       (past, future) = runPredicate timePred refTime tc
 

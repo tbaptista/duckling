@@ -79,6 +79,7 @@ testContext = Context
 testOptions :: Options
 testOptions = Options
   { withLatent = False
+  , withoutRound = False
   }
 
 withLocale :: (Context, Options, [a]) -> Locale -> [a]
